@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 
-function InputFormEnergyGdp(props) {
+function InputFormEnergyGdp() {
     const[year, setYear] = useState();
     const[batchSize, setBatchSize] = useState();
     const[batchNumber, setBatchNumber] = useState();
 
     const getData = (event) => {
         event.preventDefault();
-        props.setDataCreate([]);
-        props.setDataUpdate([]);
-        props.setDataDelete([]);
         if (batchSize != 0) {
             fetch("http://localhost:8080/countries/" + year + "/energy?batch_size=" + batchSize + "&batch_number=" + batchNumber)
                 .then(response => response.json())
-                .then(json => props.setDataRetrieve(json))
-                .catch(error => console.error('Error fetching data:', error));
+                .then(json => localStorage.setItem("results", JSON.stringify(json)))
+                .then(() => window.location.href = "results")
+                .catch(error => alert("Data not found"));
+        } else {
+            alert("Something is wrong");
         }
     }
 

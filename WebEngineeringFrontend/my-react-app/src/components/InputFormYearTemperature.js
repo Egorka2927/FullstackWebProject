@@ -1,15 +1,20 @@
 import { useState } from "react";
 
-function InputFormYearTemperature(props) {
+function InputFormYearTemperature() {
 
-    const[year, setYear] = useState();
+    const[year, setYear] = useState("");
 
     const getData = (event)=> {
         event.preventDefault();
-        fetch("http://localhost:8080/continents/" + year + "/temperature")
-            .then(response => response.json())
-            .then(json => props.setData(json))
-            .catch(error => console.error('Error fetching data:', error));
+        if (year.length > 0) {
+            fetch("http://localhost:8080/continents/" + year + "/temperature")
+                .then(response => response.json())
+                .then(json => localStorage.setItem("results", JSON.stringify(json)))
+                .then(() => window.location.href = "results")
+                .catch(error => console.error('Error fetching data:', error));
+        } else {
+            alert("Something is wrong");
+        }
     }
 
     const changeYear = event => {

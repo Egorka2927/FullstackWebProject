@@ -9,6 +9,7 @@ import EnergyGdp from './pages/energyGdp/EnergyGdp';
 import Emissions from './pages/emissionsData/Emissions';
 import Temperature from './pages/temperature/Temperature';
 import Countries from './pages/countries/Countries';
+import ResultsPage from './pages/resultsPage/ResultsPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,6 +21,7 @@ root.render(
       <Route path="/emissions/" element={<Emissions/>}/>
       <Route path="/temperature/" element={<Temperature/>}/>
       <Route path="/countries/" element={<Countries/>}/>
+      <Route path="/results/" element={<ResultsPage/>}/>
     </Routes>
   </BrowserRouter>
 );

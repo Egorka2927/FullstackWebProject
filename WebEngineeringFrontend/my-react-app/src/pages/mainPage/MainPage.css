@@ -85,6 +85,17 @@ button:active {
     justify-content: space-evenly;
 }
 
+table, th, td {
+    border:1px solid white;
+    text-align: center;
+    color: white;
+}
+
+p {
+    margin: 0;
+    color: white;
+}
+
 .main-container {
     min-width: 100%;
     min-height: 100%;

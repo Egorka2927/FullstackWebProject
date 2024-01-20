@@ -1,14 +1,12 @@
 import { useState } from "react";
 import "./Emissions.css";
 import NavBar from "../../components/NavBar";
-import ResultsHeader from "../../components/ResultsHeader";
 
 function Emissions() {
-    const [data, setData] = useState([]);
     const [country, setCountry] = useState("");
 
     const [countryFiltered, setCountryFiltered] = useState("");
-    const [yearFiltered, setYearFiltered] = useState();
+    const [yearFiltered, setYearFiltered] = useState("");
 
     const changeCountry = event => {
         setCountry(event.target.value);
@@ -27,12 +25,14 @@ function Emissions() {
         if (country.length > 3) {
             fetch("http://localhost:8080/countries/" + country + "/emissions-name")
             .then(response => response.json())
-            .then(json => setData(json))
+            .then(json => localStorage.setItem("results", JSON.stringify(json)))
+            .then(() => window.location.href = "results")
             .catch(error => alert("Data not found"));
         } else if (country.length === 3) {
             fetch("http://localhost:8080/countries/" + country.toUpperCase() + "/emissions-code")
             .then(response => response.json())
-            .then(json => setData(json))
+            .then(json => localStorage.setItem("results", JSON.stringify(json)))
+            .then(() => window.location.href = "results")
             .catch(error => alert("Data not found"));
         } else {
             alert("Something is wrong");
@@ -41,15 +41,17 @@ function Emissions() {
 
     const handleSubmitYear = (event) => {
         event.preventDefault();
-        if (countryFiltered.length > 3) {
+        if (countryFiltered.length > 3 && yearFiltered.length > 0) {
             fetch("http://localhost:8080/countries/" + countryFiltered + "/" + yearFiltered + "/emissions-name")
             .then(response => response.json())
-            .then(json => setData(json))
+            .then(json => localStorage.setItem("results", JSON.stringify(json)))
+            .then(() => window.location.href = "results")
             .catch(error => alert("Data not found"));
-        } else if (countryFiltered.length === 3) {
+        } else if (countryFiltered.length === 3 && yearFiltered.length > 0) {
             fetch("http://localhost:8080/countries/" + countryFiltered.toUpperCase() + "/" + yearFiltered + "/emissions-code")
             .then(response => response.json())
-            .then(json => setData(json))
+            .then(json => localStorage.setItem("results", JSON.stringify(json)))
+            .then(() => window.location.href = "results")
             .catch(error => alert("Data not found"));
         } else {
             alert("Something is wrong");
@@ -86,10 +88,6 @@ function Emissions() {
                     </form>
                 </div>
             </div>
-            <ul className="results-list">
-                <ResultsHeader empty={data.length === 0}/>
-                {data.map(info => <li className="list-element-data">CO2: {info.co2}, Methane: {info.methane}, Nitrous oxide: {info.nitrousOxide}, Total ghg: {info.totalGhg}</li>)}
-            </ul>
         </div>
     );
 }

@@ -1,19 +1,22 @@
 import { useState } from "react";
 
-function InputFormYearCountries(props) {
+function InputFormYearCountries() {
 
-    const[year, setYear] = useState();
+    const[year, setYear] = useState("");
     const[numberCountries, setNumberCountries] = useState();
     const[filter, setFilter] = useState("TOP");
 
     const getData = (event)=> {
         event.preventDefault();
-        if (numberCountries != 0) {
+        if (numberCountries != 0 && year.length > 0) {
             fetch("http://localhost:8080/countries/" + year + "/names?number_countries=" + numberCountries + "&filter=" + filter)
                 .then(response => response.json())
-                .then(json => props.setData(json))
-                .catch(error => console.error('Error fetching data:', error));
-        } 
+                .then(json => localStorage.setItem("results", JSON.stringify(json)))
+                .then(() => window.location.href = "results")
+                .catch(() => alert("Data not found"));
+        } else {
+            alert("Something is wrong");
+        }
     }
 
     const changeYear = event => {
