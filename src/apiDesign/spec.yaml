@@ -1,0 +1,1141 @@
+openapi: "3.0.2"
+info:
+  title: Web Engineering Project
+  version: "1.0"
+  description: This specification serves as the baseline for all tools developed in the context of the project
+
+servers:
+  - url: http://localhost:8080
+    description: Spring backend implementation
+
+components:
+  schemas:
+    PopulationGdpCountry:
+      type: object
+      properties:
+        country:
+          type: string
+        year:
+          type: integer
+        population:
+          type: integer
+        gdp:
+          type: integer
+    PopulationGdpIsoCode:
+      type: object
+      properties:
+        iso_code:
+          type: string
+        year:
+          type: integer
+        population:
+          type: integer
+        gdp:
+          type: integer
+    PopulationGdpData:
+      type: object
+      properties:
+        population:
+          type: integer
+        gdp:
+          type: integer
+    EmissionsData:
+      type: object
+      properties:
+        year:
+          type: integer
+        co2:
+          type: integer
+        methane:
+          type: integer
+        nitrousOxide:
+          type: integer
+        totalGhg:
+          type: integer
+    TemperatureData:
+      type: object
+      properties:
+        continent:
+          type: string
+        share:
+          type: integer
+        ch4:
+          type: integer
+        co2:
+          type: integer
+        ghg:
+          type: integer
+        n2o:
+          type: integer
+    EnergyData:
+      type: object
+      properties:
+        energyGdp:
+          type: integer
+        energyCapita:
+          type: integer
+    EnergyCountryData:
+      type: object
+      properties:
+        country:
+          type: string
+        year:
+          type: integer
+        energyCapita:
+          type: integer
+        energyGdp:
+          type: integer
+    CountryNameData:
+      type: object
+      properties:
+        countryName:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Request was not well-formed, see error details
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+                example: Request was not well-formed
+        text/csv:
+          schema:
+            type: string
+            example: "error-message\nRequest was not well-formed"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+                example: Resource not found
+        text/csv:
+          schema:
+            type: string
+            example: "error-message\nResource not found"
+
+
+    NoResults:
+      description: List empty; no results
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+                example: No results
+        text/csv:
+          schema:
+            type: string
+            example: "error-message\nNo results"
+
+    ServerError:
+      description: Server error; no results, try again later
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+                example: Server error
+        text/csv:
+          schema:
+            type: string
+            example: "error-message\nServer error"
+
+
+paths:
+  /countries/{country}/{year}/population-gdp-name:
+    get:
+      tags:
+        - Population and GDP by country
+      description: Retrieves the data about population and gdp
+      summary: Retrieves population and gdp
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PopulationGdpData"
+            text/csv:
+              schema:
+                type: string
+                example: "population, gdp\n3000000, 3000000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Population and GDP by country
+      description: Delete the data about population and gdp
+      summary: Delete population and gdp
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        '204':
+          description: Data deleted successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    description: Data deleted successfully
+                    example: Data deleted successfully
+            text/csv:
+              schema:
+                type: string
+                description: Data deleted successfully
+                example: "message\nData deleted successfully"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Population and GDP by country
+      description: Update the data about population and gdp
+      summary: Update population and gdp
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopulationGdpData"
+      responses:
+        '200':
+          description: "Data updated, returns the new state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PopulationGdpCountry"
+            text/csv:
+              schema:
+                type: string
+                description: Data updated successfully
+                example: "population, gdp\n0, 0"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/country/population-gdp-name:
+    post:
+      tags:
+        - Population and GDP by country
+      description: Create the data about population and gdp
+      summary: Creates population and gdp
+      parameters:
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopulationGdpCountry"
+      responses:
+        '201':
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    description: ID of newly created data
+            text/csv:
+              schema:
+                type: string
+                description: ID of newly created data
+                example: "id\n0"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '409':
+          description: Data with the same year already exists
+          content:
+            application/json:
+              schema:
+                properties:
+                  error-message:
+                    type: string
+                    description: Error message
+                    example: Already exists
+                  url:
+                    type: string
+                    description: The URL of the pre-existing data
+                    example: http://funnyCats.com
+            text/csv:
+              schema:
+                type: string
+                example: "error-message, url\nAlready exists, http://funnyCats.com"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{iso_code}/{year}/population-gdp-code:
+    get:
+      tags:
+        - Population and GDP by ISO code
+      description: Retrieves the data about population and gdp
+      summary: Retrieves population and gdp
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of the iso_code
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PopulationGdpData"
+            text/csv:
+              schema:
+                type: string
+                example: "population gdp\n3000000 3000000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Population and GDP by ISO code
+      description: Delete the data about population and gdp
+      summary: Delete population and gdp
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of the iso_code
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        '204':
+          description: Data deleted successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    description: Data deleted successfully
+                    example: Data deleted successfully
+            text/csv:
+              schema:
+                type: string
+                description: Data deleted successfully
+                example: "message\nData deleted successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Population and GDP by ISO code
+      description: Update the data about population and gdp
+      summary: Update population and gdp
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of the iso_code
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopulationGdpData"
+      responses:
+        '200':
+          description: "Data updated, returns the new state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PopulationGdpIsoCode"
+            text/csv:
+              schema:
+                type: string
+                description: Data updated successfully
+                example: "population, gdp\n0, 0"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/iso_code/population-gdp-code:
+    post:
+      tags:
+        - Population and GDP by ISO code
+      description: Create the data about population and gdp
+      summary: Creates population and gdp
+      parameters:
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PopulationGdpIsoCode"
+      responses:
+        '201':
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    description: ID of newly created data
+            text/csv:
+              schema:
+                type: string
+                description: ID of newly created data
+                example: "id\n0"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '409':
+          description: Data with the same year already exists
+          content:
+            application/json:
+              schema:
+                properties:
+                  error-message:
+                    type: string
+                    description: Error message
+                    example: Already exists
+                  url:
+                    type: string
+                    description: The URL of the pre-existing data
+                    example: http://funnyCats.com
+            text/csv:
+              schema:
+                type: string
+                example: "error-message, url\nAlready exists, http://funnyCats.com"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{country}/emissions-name:
+    get:
+      tags:
+        - Emissions
+      description: Retrieves the data about emissions data
+      summary: Retrieves emissions data
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionsData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, methane, Co2, N20, Ghg\n 50000, 600000, 10000, 234000, 678000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+  /countries/{iso_code}/emissions-code:
+    get:
+      tags:
+        - Emissions
+      description: Retrieves the data about emissions data
+      summary: Retrieves emissions data
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of the iso_code
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionsData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, methane, Co2, N20, Ghg\n 500000, 600000, 10000, 234000, 678000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{country}/{year}/emissions-name:
+    get:
+      tags:
+        - Emissions
+      description: Retrieves emissions data for a provided year and later
+      summary: Retrieves emissions data
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionsData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, methane, Co2, N20, Ghg\n 450000, 200000, 30000, 234000, 678000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{iso_code}/{year}/emissions-code:
+    get:
+      tags:
+        - Emissions
+      description: Retrieves emissions data for a provided year and later
+      summary: Retrieves emissions data
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of the iso code
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionsData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, methane, Co2, N20, Ghg\n 540000, 100000, 67000, 27000, 68000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+  /continents/temperature:
+    get:
+      tags:
+        - Temperature
+      description: Retrieves the data about temperature data
+      summary: Retrieves temperature data
+      parameters:
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TemperatureData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, Ch4, Co2, N20, Ghg\n 500000, 600000, 10000, 234000, 678000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /continents/{year}/temperature:
+    get:
+      tags:
+        - Temperature
+      description: Retrieves temperature data for a provided year and later
+      summary: Retrieves temperature data
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TemperatureData"
+            text/csv:
+              schema:
+                type: string
+                example: "share, Ch4, Co2, N20, Ghg\n 500000, 600000, 10000, 234000, 678000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{year}/energy:
+    get:
+      tags:
+        - Energy
+      description: Retrieves energy data for a provided year and later
+      summary: Retrieves energy data
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: batchSize
+          required: true
+          schema:
+            type: integer
+          description: The batch size
+        - in: query
+          name: batchNumber
+          required: true
+          schema:
+            type: integer
+          description: The number of the batch
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EnergyData"
+            text/csv:
+              schema:
+                type: string
+                example: "energyCapita, energyGdp\n1000, 250000"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{country}/{year}/energy:
+    delete:
+      tags:
+        - Energy
+      description: Delete the data about energy
+      summary: Deletes energy data
+      parameters:
+        - in: path
+          name: country
+          required: true
+          schema:
+            type: string
+          description: The name of the country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        '204':
+          description: Data deleted successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    description: Data deleted successfully
+                    example: Data deleted successfully
+            text/csv:
+              schema:
+                type: string
+                description: Data deleted successfully
+                example: "message\nData deleted successfully"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Energy
+      description: Update the data about energy
+      summary: Updates energy data
+      parameters:
+        - in: path
+          name: iso_code
+          required: true
+          schema:
+            type: string
+          description: The name of country
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnergyData"
+      responses:
+        '200':
+          description: "Data updated, returns the new state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnergyCountryData"
+            text/csv:
+              schema:
+                type: string
+                description: Data updated successfully
+                example: "energyCapita, energyGdp\n0, 0"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/country/year/energy:
+    post:
+      tags:
+        - Energy
+      description: Creates energy data for a provided country and year
+      summary: Creates energy data
+      parameters:
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        '201':
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    description: ID of newly created data
+            text/csv:
+              schema:
+                type: string
+                description: ID of newly created data
+                example: "id\n0"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '409':
+          description: Data with the same year already exists
+          content:
+            application/json:
+              schema:
+                properties:
+                  error-message:
+                    type: string
+                    description: Error message
+                    example: Already exists
+                  url:
+                    type: string
+                    description: The URL of the pre-existing data
+                    example: http://funnyCats.com
+            text/csv:
+              schema:
+                type: string
+                example: "error-message, url\nAlready exists, http://funnyCats.com"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{year}/names:
+    get:
+      tags:
+        - Countries
+      description: Retrieves country data for a provided year
+      summary: Retrieves country data
+      parameters:
+        - in: path
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: The year
+        - in: query
+          name: numberCountries
+          required: true
+          schema:
+            type: integer
+          description: Number of countries shown
+        - in: query
+          name: filter
+          required: true
+          schema:
+            type: string
+          description: Top or bottom countries
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CountryNameData"
+            text/csv:
+              schema:
+                type: string
+                example: "countryName\nMadagascar"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/names:
+    get:
+      tags:
+        - Countries
+      description: Retrieves country data for a provided year and later
+      summary: Retrieves country data
+      parameters:
+        - in: query
+          name: years
+          required: true
+          schema:
+            type: integer
+          description: Last M years
+        - in: query
+          name: numberCountries
+          required: true
+          schema:
+            type: integer
+          description: Number of countries shown
+        - in: query
+          name: filter
+          required: true
+          schema:
+            type: string
+          description: Top or bottom countries
+        - in: query
+          name: format
+          required: false
+          schema:
+            type: string
+          description: Format type
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CountryNameData"
+            text/csv:
+              schema:
+                type: string
+                example: "countryName\nMadagascar"
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'

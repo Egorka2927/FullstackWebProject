@@ -1,0 +1,25 @@
+.menu-container-temperature {
+    justify-content: center;
+    height: 200px;
+}
+
+.menu-container-temperature-left {
+    margin-right: 50px;
+}
+
+.menu-container-temperature-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menus-container-temperature {
+    justify-content: center;
+}
+
+.country-form-temperature {
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    height: 370px;
+}

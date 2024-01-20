@@ -1,0 +1,46 @@
+services:
+  mysql_db:
+    image: mysql:latest
+    container_name: mysql_db
+    networks:
+      - network1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: ${DATABASE_NAME:?}
+      MYSQL_USER: ${DATABASE_USER:?}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:?}
+    ports:
+      - ${DATABASE_PORT:?}:3306
+    volumes:
+      - ./data/db:/var/lib/mysql
+      - ./data/sql:/docker-entrypoint-initdb.d
+    restart: always
+
+  backend:
+    image: backend
+    container_name: backend
+    networks:
+      - network1
+    build: .
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysql_db:3306/co2_gge_data
+    ports:
+      - ${BACKEND_SPRING_PORT:?}:8080
+    depends_on:
+      - mysql_db
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    ports:
+      - ${FRONTEND_REACT_PORT:?}:3000
+    build:
+      context: ./WebEngineeringFrontend/my-react-app
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    networks:
+      - network1
+
+networks:
+  network1:

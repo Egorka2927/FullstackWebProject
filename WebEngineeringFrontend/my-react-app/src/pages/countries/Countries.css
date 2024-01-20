@@ -1,0 +1,23 @@
+.menu-container-countries {
+    height: 375px;
+}
+
+.menu-container-countries-left {
+    margin-right: 50px;
+}
+
+input {
+    width: 150px;
+    height: 10px;
+    margin-bottom: 10px;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+select {
+    margin-bottom: 20px;
+    width: 192px;
+    border-radius: 5px;
+    height: 36px;
+}
