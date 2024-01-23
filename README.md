@@ -62,4 +62,4 @@ data fetching could be implemented in a more robust manner. Despite all of these
 ## Work Distribution
 
 Our team consists of two members. We have split the workload evenly between the two of us. Every time we have worked on this project we did it together. We did not assign roles to each other, we just worked on the same things from start to finish.
-We both understand how our application works and we both know how to infrastructure is deployed. Essentially, the work as been split evenly in half.
+We both understand how our application works and we both know how to infrastructure is deployed. Essentially, the work has been split evenly in half.
